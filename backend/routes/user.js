@@ -4,6 +4,6 @@ const UserController = require('../controllers/user');
 
 const router = express.Router();
 
-router.post('/upload', UserController.userUpload);
+router.get('/upload', UserController.userUpload);
 
 module.exports = router;
