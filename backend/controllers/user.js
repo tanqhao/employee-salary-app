@@ -3,11 +3,14 @@ const User = require('../models/user');
 const fs = require('fs');
 const Papa = require('papaparse');
 
-const csvFilePath = './csv/user.csv'
-
-
 exports.userUpload = async (req, res, next) => {
-  let parsedData = await readCSV(csvFilePath);
+  try{
+    let parsedData = await readCSV(req.file.path);
+    return res.status(200).json({ message: parsedData });
+  }
+  catch(err) {
+    return res.status(422).json({ message: err });
+  };
 };
 
 
@@ -18,7 +21,7 @@ const readCSV = async (filePath) => {
   const idList = [];
   const loginList = [];
 
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     Papa.parse(csvData, {
       header: true,
       comments: '#',
@@ -27,39 +30,54 @@ const readCSV = async (filePath) => {
       step: (results, parser) => {
 
         parser.pause();
-        console.log("Row data:", results);
 
         const salary = results.data['salary'];
 
-        if(typeof(salary) !== 'number' ||salary < 0.0 ) {
-          console.log('incorrect salary format', salary)
+        // check salary
+        if(typeof(salary) !== 'number' || salary < 0.0 ) {
+          reject(`incorrect salary format ${salary}`);
           parser.abort();
         }
 
-        if(idList.includes(results.data['id']) || loginList.includes(results.data['login'])) {
-          console.log('duplicate entry');
+        // check duplicate employee ID
+        if(idList.includes(results.data['id'])) {
+          reject(`duplicate employee ID ${results.data['id']}`);
+          parser.abort();
+        }
+
+        // check duplicate login ID
+        if(loginList.includes(results.data['login'])) {
+          reject(`duplicate login ID ${results.data['login']}`);
           parser.abort();
         }
 
         idList.push(results.data['id']);
         loginList.push(results.data['login']);
 
-        const user = new User({
-          id: results.data['id'],
+        const id = { id: results.data['id']};
+        const userData = {
           login: results.data['login'],
           name: results.data['name'],
           salary: salary,
-        });
+        };
 
-        user.save().then(()=> {
+        // update / create in DB
+        User.findOneAndUpdate(id, userData, {
+          upsert: true
+        }).then(()=> {
           parser.resume();
         }).catch(err => {
-          console.log(err);
+          reject(err);
           parser.abort();
         });
 
-        // console.log("Row errors:", results.errors);
       },
+      complete: (results, file) => {
+        if(results.meta.aborted)
+        reject('CSV parse error');
+        else
+        resolve('CSV successfully parsed');
+      }
     });
   });
 };
