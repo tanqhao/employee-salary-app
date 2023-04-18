@@ -44,7 +44,20 @@ const readCSV = async (filePath) => {
         idList.push(results.data['id']);
         loginList.push(results.data['login']);
 
-        parser.resume();
+        const user = new User({
+          id: results.data['id'],
+          login: results.data['login'],
+          name: results.data['name'],
+          salary: salary,
+        });
+
+        user.save().then(()=> {
+          parser.resume();
+        }).catch(err => {
+          console.log(err);
+          parser.abort();
+        });
+
         // console.log("Row errors:", results.errors);
       },
     });
