@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { HttpClientModule } from "@angular/common/http";
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 import { AngularMaterialModule } from "./angular-material.module";
 
@@ -23,7 +24,8 @@ import { UserPageComponent } from './user-page/user-page.component';
   ],
   imports: [
     BrowserModule,
-
+    FormsModule,
+    ReactiveFormsModule,
     BrowserAnimationsModule,
     HttpClientModule,
     AngularMaterialModule,

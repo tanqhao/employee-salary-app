@@ -1,5 +1,43 @@
+
+<mat-toolbar class="filter-container">
+
+  <mat-label font>Salary:  &nbsp;&nbsp;</mat-label>
+  <mat-slider style="width: 10vw" min="0" max="25000" discrete>
+    <input [formControl]="salaryMin" value="0" matSliderStartThumb >
+    <input [formControl]="salaryMax" value="10000" matSliderEndThumb>
+  </mat-slider>
+
+  <mat-label>Sort By:</mat-label>
+  <mat-button-toggle-group [formControl]="sortBy">
+    <mat-button-toggle value="id">Id</mat-button-toggle>
+    <mat-button-toggle value="login">Login</mat-button-toggle>
+    <mat-button-toggle value="name">Name</mat-button-toggle>
+    <mat-button-toggle value="salary">Salary</mat-button-toggle>
+  </mat-button-toggle-group>
+
+  <mat-slide-toggle [formControl]="desc">DSC</mat-slide-toggle>
+
+  <mat-label>Limit:</mat-label>
+  <mat-slider style="width: 7vw" min="10" max="999" discrete>
+    <input [formControl]="limit" value="30" matSliderThumb >
+  </mat-slider>
+
+  <mat-form-field appearance="outline">
+    <mat-label>
+      Offset
+    </mat-label>
+    <input matInput type="number" min="0"  [formControl]="offset"/>
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" (click)="searchHandler()">Search</button>
+
+</mat-toolbar>
+
+<div class="container">
+
+  <div class="card-container" >
+    <ng-container *ngFor="let user of userList">
+      <app-user-details [userDetails]="user" ></app-user-details>
+    </ng-container>
+  </div>
 <div>
-  <ng-container *ngFor="let user of userList">
-    <app-user-details></app-user-details>
-  </ng-container>
-</div>

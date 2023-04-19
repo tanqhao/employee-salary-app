@@ -15,9 +15,23 @@ export class UserService {
   constructor(protected http: HttpClient) {
   }
 
-
   getUsers() {
-    return this.http.get<User[]>(`${environment.apiUrl}/user/users`, { observe: 'body' }).pipe(
+    return this.http.get<User[]>
+    (`${environment.apiUrl}/user/users`,
+    { observe: 'body' }).pipe(
+      map((responseData) => {
+        return responseData;
+      }),
+      catchError((errorRes) => {
+        return throwError(errorRes);
+      })
+    );
+  }
+
+  getUsersFilter(minSalary: number, maxSalary: number, sortBy: string, limit: number, offset: number) {
+    return this.http.get<User[]>
+    (`${environment.apiUrl}/user/users?minSalary=${minSalary}&maxSalary=${maxSalary}&offset=${offset}&limit=${limit}&sort=${sortBy}`,
+    { observe: 'body' }).pipe(
       map((responseData) => {
         return responseData;
       }),

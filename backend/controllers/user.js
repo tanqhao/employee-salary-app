@@ -31,7 +31,7 @@ const readCSV = async (filePath) => {
 
         parser.pause();
 
-        if(results.errors) {
+        if(results.errors.length) {
           reject(`${results.errors[0].message}`);
           parser.abort();
         }
@@ -91,16 +91,29 @@ const readCSV = async (filePath) => {
 exports.userList = async (req, res, next) => {
 
   try{
-    const minSalary = +req.query.minSalary;
-    const maxSalary = +req.query.maxSalary;
-    const limit = +req.query.limit || 30;
-    const sort = req.query.sort;
 
-    console.log(req.query);
+    if(Object.keys(req.query).length) {
 
+      const minSalary = +req.query.minSalary;
+      const maxSalary = +req.query.maxSalary;
+      const limit = +req.query.limit || 30;
+      const sort = req.query.sort;
+      const offset = req.query.offset;
 
+      let sortOrder = 1;
+
+      if(sort.substring(0, 1) === '-')
+        sortOrder = -1;
+
+      const users = await User.find({salary: {$gte: minSalary, $lte: maxSalary}}, {_id: 0, __v: 0},)
+      .sort({[sort.slice(1)]: sortOrder}).skip(offset).limit(limit);
+      return res.status(200).json(users);
+    }
+
+    else {
     const users = await User.find({}, {_id: 0, __v: 0},);
     return res.status(200).json(users);
+    }
   }
   catch(err) {
     return res.status(400).json({ message: `${err}` });

@@ -1,3 +1,13 @@
-<mat-card>
-  User Details
-</mat-card>
+
+  <mat-card style="width: 20vw;">
+    <mat-card-header>
+    <mat-card-title-group>
+    <mat-card-title>{{userDetails.name}}</mat-card-title>
+  </mat-card-title-group>
+</mat-card-header>
+    <mat-card-content>
+      <mat-label>Id: {{userDetails.id}}</mat-label><br>
+      <mat-label>Login: {{userDetails.login}}</mat-label><br>
+      <mat-label>Salary: ${{userDetails.salary}}</mat-label><br>
+    </mat-card-content>
+  </mat-card>
