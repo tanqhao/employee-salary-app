@@ -107,12 +107,12 @@ exports.userList = async (req, res, next) => {
 
       const users = await User.find({salary: {$gte: minSalary, $lte: maxSalary}}, {_id: 0, __v: 0},)
       .sort({[sort.slice(1)]: sortOrder}).skip(offset).limit(limit);
-      return res.status(200).json(users);
+      return res.status(200).json({results: users});
     }
 
     else {
     const users = await User.find({}, {_id: 0, __v: 0},);
-    return res.status(200).json(users);
+    return res.status(200).json({results: users});
     }
   }
   catch(err) {

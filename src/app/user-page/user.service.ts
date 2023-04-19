@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { User } from './user.model';
+import { UserPayload } from './user.model';
 import { throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 
@@ -16,11 +16,11 @@ export class UserService {
   }
 
   getUsers() {
-    return this.http.get<User[]>
+    return this.http.get<UserPayload>
     (`${environment.apiUrl}/user/users`,
     { observe: 'body' }).pipe(
       map((responseData) => {
-        return responseData;
+        return responseData.results;
       }),
       catchError((errorRes) => {
         return throwError(errorRes);
@@ -29,11 +29,11 @@ export class UserService {
   }
 
   getUsersFilter(minSalary: number, maxSalary: number, sortBy: string, limit: number, offset: number) {
-    return this.http.get<User[]>
+    return this.http.get<UserPayload>
     (`${environment.apiUrl}/user/users?minSalary=${minSalary}&maxSalary=${maxSalary}&offset=${offset}&limit=${limit}&sort=${sortBy}`,
     { observe: 'body' }).pipe(
       map((responseData) => {
-        return responseData;
+        return responseData.results;
       }),
       catchError((errorRes) => {
         return throwError(errorRes);

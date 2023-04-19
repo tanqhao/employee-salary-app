@@ -4,3 +4,7 @@ export interface User {
   name: string,
   salary: number,
 }
+
+export interface UserPayload {
+  results: User[];
+}
