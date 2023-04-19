@@ -9,7 +9,7 @@ exports.userUpload = async (req, res, next) => {
     return res.status(200).json({ message: parsedData });
   }
   catch(err) {
-    return res.status(422).json({ message: err });
+    return res.status(422).json({ message: `CSV parse error: ${err}` });
   };
 };
 
@@ -30,6 +30,11 @@ const readCSV = async (filePath) => {
       step: (results, parser) => {
 
         parser.pause();
+
+        if(results.errors) {
+          reject(`${results.errors[0].message}`);
+          parser.abort();
+        }
 
         const salary = results.data['salary'];
 
@@ -74,10 +79,30 @@ const readCSV = async (filePath) => {
       },
       complete: (results, file) => {
         if(results.meta.aborted)
-        reject('CSV parse error');
+        reject('CSV parse aborted');
         else
         resolve('CSV successfully parsed');
       }
     });
   });
+};
+
+
+exports.userList = async (req, res, next) => {
+
+  try{
+    const minSalary = +req.query.minSalary;
+    const maxSalary = +req.query.maxSalary;
+    const limit = +req.query.limit || 30;
+    const sort = req.query.sort;
+
+    console.log(req.query);
+
+
+    const users = await User.find({}, {_id: 0, __v: 0},);
+    return res.status(200).json(users);
+  }
+  catch(err) {
+    return res.status(400).json({ message: `${err}` });
+  };
 };
