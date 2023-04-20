@@ -8,6 +8,9 @@ You can also overwrite the port with
 PORT=
 
 
+npm run node - to run backend
+ng serve - to run frontend
+
 API Endpoints 
 
 Upload a CSV file
